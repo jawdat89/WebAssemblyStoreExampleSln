@@ -17,6 +17,16 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "WebAssemblyStoreExampleOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:7187", "https://localhost:7187")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 
 var app = builder.Build();
@@ -27,6 +37,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("WebAssemblyStoreExampleOrigins");
 
 app.UseHttpsRedirection();
 
