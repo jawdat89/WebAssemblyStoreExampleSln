@@ -24,4 +24,8 @@
     <Folder Include="CodeSnippets\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WebAssemblyStoreExample.Models\WebAssemblyStoreExample.Models.csproj" />
+  </ItemGroup>
+
 </Project>

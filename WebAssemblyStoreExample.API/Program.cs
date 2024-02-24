@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebAssemblyStoreExample.API.Data;
+using WebAssemblyStoreExample.API.Repositories;
+using WebAssemblyStoreExample.API.Repositories.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 
 var app = builder.Build();
 
