@@ -9,7 +9,7 @@ namespace WebAssemblyStoreExample.Pages
         [Inject]
         public IShoppongCartService ShoppingCartService { get; set; }
 
-        public IEnumerable<CartItemDto> ShoppingCartItems { get; set; }
+        public List<CartItemDto> ShoppingCartItems { get; set; }
 
         public string ErrorMessage { get; set; }
 
@@ -23,6 +23,26 @@ namespace WebAssemblyStoreExample.Pages
             {
                 ErrorMessage = ex.Message;
             }
+        }
+
+        protected async Task DeleteCartItem_Click(int id)
+        {
+            var cartItemDto = await ShoppingCartService.DeleteItem(id);
+
+            RemoveCartItem(id);
+
+        }
+
+        private void RemoveCartItem(int id)
+        {
+            var cartItemDto = GetCartItem(id);
+
+            ShoppingCartItems.Remove(cartItemDto);
+        }
+
+        private CartItemDto GetCartItem(int id)
+        {
+            return ShoppingCartItems.FirstOrDefault(i => i.Id == id);
         }
     }
 }

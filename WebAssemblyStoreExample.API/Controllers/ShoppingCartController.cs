@@ -107,7 +107,30 @@ namespace WebAssemblyStoreExample.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                         ex.Message);
             }
+        }
 
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<CartItemDto>> DeleteItem(int id)
+        {
+            try
+            {
+                var cartItem = await _shoppingCartRepository.DeleteItem(id);
+                if (cartItem == null)
+                {
+                    return NotFound();
+                }
+
+                var product = await _productsRepository.GetItem(cartItem.ProductId);
+
+                var cartItemDto = cartItem.ConvertToDto(product);
+
+                return Ok(cartItemDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                        ex.Message);
+            }
         }
     }
 }
