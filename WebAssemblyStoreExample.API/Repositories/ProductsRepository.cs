@@ -22,17 +22,13 @@ namespace WebAssemblyStoreExample.API.Repositories
         {
             var category = await _context.ProductCategories.FindAsync(id);
 
-            if (category == null)
-            {
-                throw new Exception("Category is not exists");
-            }
-
             return category;
         }
 
-        public Task<Product> GetItem(int id)
+        public async Task<Product> GetItem(int id)
         {
-            throw new NotImplementedException();
+            var product = await _context.Products.FindAsync(id);
+            return product;
         }
 
         public async Task<IEnumerable<Product>> GetItems()

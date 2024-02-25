@@ -23,8 +23,8 @@ namespace WebAssemblyStoreExample.API.Controllers
         {
             try
             {
-                var products = await this._productRepository.GetItems();
-                var productCategories = await this._productRepository.GetCategories();
+                var products = await _productRepository.GetItems();
+                var productCategories = await _productRepository.GetCategories();
 
                 if (products == null || productCategories == null)
                 {
@@ -43,5 +43,33 @@ namespace WebAssemblyStoreExample.API.Controllers
             }
 
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProductDto>> GetItems(int id)
+        {
+            try
+            {
+                var product = await _productRepository.GetItem(id);
+
+                if (product == null)
+                {
+                    return BadRequest();
+                }
+
+                var productCategory = await _productRepository.GetCategory(product.CategoryId);
+
+                var productDtos = product.ConvertToDto(productCategory);
+
+                return Ok(productDtos);
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error retrieving data from the database");
+            }
+
+        }
+
     }
 }
