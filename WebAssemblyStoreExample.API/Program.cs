@@ -28,6 +28,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
 var app = builder.Build();
 

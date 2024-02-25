@@ -11,10 +11,15 @@ namespace WebAssemblyStoreExample.Pages
 
         [Inject]
         public IProductService ProductService { get; set; }
+        [Inject]
+        public IShoppongCartService ShoppongCartService { get; set; }
 
         public ProductDto Product { get; set; }
 
         public string ErrorMessage { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -22,6 +27,19 @@ namespace WebAssemblyStoreExample.Pages
             {
                 Product = await ProductService.GetItem(Id);
             } catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
+        }
+
+        protected async Task AddToCart_Click(CartItemToAddDto cartItemToAddDto)
+        {
+            try
+            {
+                var cartItemDto = await ShoppongCartService.AddItem(cartItemToAddDto);
+                NavigationManager.NavigateTo("/ShoppingCart");
+            }
+            catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
             }
