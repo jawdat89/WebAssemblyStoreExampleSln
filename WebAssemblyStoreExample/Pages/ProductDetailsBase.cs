@@ -12,7 +12,7 @@ namespace WebAssemblyStoreExample.Pages
         [Inject]
         public IProductService ProductService { get; set; }
         [Inject]
-        public IShoppongCartService ShoppongCartService { get; set; }
+        public IShoppingCartService ShoppongCartService { get; set; }
 
         public ProductDto Product { get; set; }
 

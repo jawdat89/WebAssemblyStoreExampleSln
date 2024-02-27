@@ -8,9 +8,10 @@ using WebAssemblyStoreExample.Services.Contracts;
 
 namespace WebAssemblyStoreExample.Services
 {
-    public class ShoppingCartService : IShoppongCartService
+    public class ShoppingCartService : IShoppingCartService
     {
         private readonly HttpClient _httpClient;
+        public event Action<int> OnShoppingCartChanged;
 
         public ShoppingCartService(HttpClient httpClient)
         {
@@ -93,6 +94,14 @@ namespace WebAssemblyStoreExample.Services
             {
 
                 throw;
+            }
+        }
+
+        public void RaiseEventOnShoppingCartChanged(int totalQty)
+        {
+            if (OnShoppingCartChanged != null) // it means that event has subscribers
+            {
+                OnShoppingCartChanged.Invoke(totalQty);
             }
         }
 
