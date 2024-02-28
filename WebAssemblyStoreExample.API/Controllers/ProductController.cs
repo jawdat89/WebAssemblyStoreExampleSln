@@ -24,14 +24,13 @@ namespace WebAssemblyStoreExample.API.Controllers
             try
             {
                 var products = await _productRepository.GetItems();
-                var productCategories = await _productRepository.GetCategories();
 
-                if (products == null || productCategories == null)
+                if (products == null)
                 {
                     return NotFound();
                 }
 
-                var productDtos = products.ConvertToDto(productCategories);
+                var productDtos = products.ConvertToDto();
 
                 return Ok(productDtos);
 
@@ -56,9 +55,7 @@ namespace WebAssemblyStoreExample.API.Controllers
                     return BadRequest();
                 }
 
-                var productCategory = await _productRepository.GetCategory(product.CategoryId);
-
-                var productDtos = product.ConvertToDto(productCategory);
+                var productDtos = product.ConvertToDto();
 
                 return Ok(productDtos);
 
@@ -96,8 +93,7 @@ namespace WebAssemblyStoreExample.API.Controllers
             try
             {
                 var products = await _productRepository.GetItemsByCategory(categoryId);
-                var productCategories = await _productRepository.GetCategories();
-                var productDtos = products.ConvertToDto(productCategories);
+                var productDtos = products.ConvertToDto();
 
                 return Ok(productDtos);
             }
