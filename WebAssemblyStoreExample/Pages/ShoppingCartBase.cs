@@ -12,6 +12,9 @@ namespace WebAssemblyStoreExample.Pages
         [Inject]
         public IShoppingCartService ShoppingCartService { get; set; }
 
+        [Inject]
+        public IManageCartItemsLocalStorageService ManageCartItemsLocalStorageService { get; set; }
+
         public List<CartItemDto> ShoppingCartItems { get; set; }
 
         public string ErrorMessage { get; set; }
@@ -25,7 +28,7 @@ namespace WebAssemblyStoreExample.Pages
         {
             try
             {
-                ShoppingCartItems = await ShoppingCartService.GetItems(HardCoded.UserId);
+                ShoppingCartItems = await ManageCartItemsLocalStorageService.GetCollection();
                 CartChanged();
             }
             catch (Exception ex)
@@ -38,7 +41,7 @@ namespace WebAssemblyStoreExample.Pages
         {
             var cartItemDto = await ShoppingCartService.DeleteItem(id);
 
-            RemoveCartItem(id);
+            await RemoveCartItem(id);
             CartChanged();
         }
 
@@ -56,7 +59,7 @@ namespace WebAssemblyStoreExample.Pages
 
                     var returnedUpdateItemDto = await ShoppingCartService.UpdateQty(updateItemDto);
 
-                    UpdateItemTotalPrice(returnedUpdateItemDto);
+                    await UpdateItemTotalPrice(returnedUpdateItemDto);
 
                     CartChanged();
 
@@ -84,7 +87,7 @@ namespace WebAssemblyStoreExample.Pages
             await Js.InvokeVoidAsync("MakeUpdateQtyButtonVisible", id, true);
         }
 
-        private void UpdateItemTotalPrice(CartItemDto cartItemDto)
+        private async Task UpdateItemTotalPrice(CartItemDto cartItemDto)
         {
             var item = GetCartItem(cartItemDto.Id);
 
@@ -92,6 +95,8 @@ namespace WebAssemblyStoreExample.Pages
             {
                 item.TotalPrice = cartItemDto.Price * cartItemDto.Qty;
             }
+
+            await ManageCartItemsLocalStorageService.SaveCollection(ShoppingCartItems);
         }
 
         private void CalculateCartSummaryTotals()
@@ -110,11 +115,13 @@ namespace WebAssemblyStoreExample.Pages
             TotalQuantity = ShoppingCartItems.Sum(p => p.Qty);
         }
 
-        private void RemoveCartItem(int id)
+        private async Task RemoveCartItem(int id)
         {
             var cartItemDto = GetCartItem(id);
 
             ShoppingCartItems.Remove(cartItemDto);
+
+            await ManageCartItemsLocalStorageService.SaveCollection(ShoppingCartItems);
         }
 
         private CartItemDto GetCartItem(int id)

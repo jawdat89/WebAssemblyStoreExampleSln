@@ -12,20 +12,25 @@ namespace WebAssemblyStoreExample.Pages
         [Inject]
         public IProductService ProductService { get; set; }
         [Inject]
-        public IShoppingCartService ShoppongCartService { get; set; }
-
-        public ProductDto Product { get; set; }
-
-        public string ErrorMessage { get; set; }
-
+        public IShoppingCartService ShoppingCartService { get; set; }
+        [Inject]
+        public IManageProductsLocalStorageService ManageProductsLocalStorageService { get; set; }
+        [Inject]
+        public IManageCartItemsLocalStorageService ManageCartItemsLocalStorageService { get; set; }
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        public ProductDto Product { get; set; }
+        public string ErrorMessage { get; set; }
+        
+        private List<CartItemDto> ShoppingCartItems { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             try
             {
-                Product = await ProductService.GetItem(Id);
+                ShoppingCartItems = await ManageCartItemsLocalStorageService.GetCollection();
+                Product = await GetProdcutById(Id);
             } catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
@@ -36,13 +41,31 @@ namespace WebAssemblyStoreExample.Pages
         {
             try
             {
-                var cartItemDto = await ShoppongCartService.AddItem(cartItemToAddDto);
+                var cartItemDto = await ShoppingCartService.AddItem(cartItemToAddDto);
+
+                if (cartItemDto != null )
+                {
+                    ShoppingCartItems.Add(cartItemDto);
+                    await ManageCartItemsLocalStorageService.SaveCollection(ShoppingCartItems);
+                }
+
                 NavigationManager.NavigateTo("/ShoppingCart");
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
             }
+        }
+
+        private async Task<ProductDto> GetProdcutById(int id)
+        {
+            var productDtos = await ManageProductsLocalStorageService.GetCollection();
+
+            if (productDtos != null )
+            {
+                return productDtos.SingleOrDefault(p => p.Id == id);
+            }
+            return null;
         }
     }
 }

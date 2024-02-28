@@ -9,9 +9,10 @@ namespace WebAssemblyStoreExample.Pages
     {
         [Inject]
         public IJSRuntime Js { get; set; }
-
         [Inject]
         public IShoppingCartService ShoppingCartService { get; set; }
+        [Inject]
+        public IManageCartItemsLocalStorageService ManageCartItemsLocalStorageService { get; set; }
 
         protected IEnumerable<CartItemDto> ShoppingCartItems { get; set; } 
 
@@ -25,7 +26,7 @@ namespace WebAssemblyStoreExample.Pages
         {
             try
             {
-                ShoppingCartItems = await ShoppingCartService.GetItems(HardCoded.UserId);
+                ShoppingCartItems = await ManageCartItemsLocalStorageService.GetCollection();
 
                 if (ShoppingCartItems != null)
                 {
